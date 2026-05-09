@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phase 3 Platformer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="stage" aria-label="Phase 3 platformer">
+        <canvas id="game" width="810" height="480"></canvas>
+        <div class="hud" aria-live="polite">
+          <span id="score">0 / 0</span>
+        </div>
+        <button id="artSwitch" class="art-switch" type="button" aria-label="Toggle art style" aria-pressed="false">
+          <span class="art-switch__track" aria-hidden="true">
+            <span class="art-switch__knob"></span>
+          </span>
+          <span class="art-switch__text">원본</span>
+        </button>
+        <div class="touch" aria-hidden="true">
+          <button class="pad" data-input="left" type="button"></button>
+          <button class="pad" data-input="right" type="button"></button>
+          <button class="jump" data-input="jump" type="button"></button>
+        </div>
+      </section>
+    </main>
+    <script defer src="./src/game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+:root {
+  color-scheme: dark;
+  --bg: #2d302e;
+  --panel: #404240;
+  --ink: #f5efe4;
+  --rim: #151515;
+  --accent: #ff9fbc;
+  --grass: #b9d761;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 12%, rgba(255, 255, 255, 0.05), transparent 22rem),
+    linear-gradient(180deg, #343635 0%, #282b29 100%);
+  color: var(--ink);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+}
+
+.shell {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: clamp(10px, 2.2vw, 22px);
+}
+
+.stage {
+  position: relative;
+  width: min(100%, calc(100vh * 1.6875));
+  aspect-ratio: 810 / 480;
+  overflow: hidden;
+  background: var(--panel);
+  border: 3px solid var(--rim);
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.38),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: auto;
+  background: var(--panel);
+}
+
+.hud {
+  position: absolute;
+  top: 9px;
+  left: 11px;
+  right: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(12px, 1.7vw, 15px);
+  font-weight: 750;
+  letter-spacing: 0;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.58),
+    1px 0 0 rgba(0, 0, 0, 0.35);
+}
+
+.art-switch {
+  position: absolute;
+  right: 13px;
+  top: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 50px;
+  height: 20px;
+  padding: 3px 5px 3px 3px;
+  border: 1px solid rgba(17, 17, 17, 0.72);
+  border-radius: 999px;
+  background: rgba(32, 34, 33, 0.74);
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  letter-spacing: 0;
+  touch-action: manipulation;
+}
+
+.art-switch__track {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 12px;
+  border-radius: 999px;
+  background: #4d504e;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+.art-switch__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f5efe4;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  transition: transform 150ms ease;
+}
+
+.art-switch__text {
+  min-width: 20px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.58);
+}
+
+.stage[data-art="realistic"] .art-switch {
+  background: rgba(235, 240, 230, 0.25);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.stage[data-art="realistic"] .art-switch__track {
+  background: #9fcb8d;
+}
+
+.stage[data-art="realistic"] .art-switch__knob {
+  transform: translateX(10px);
+}
+
+.touch {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  left: 14px;
+  display: none;
+  align-items: end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.pad,
+.jump {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border: 2px solid rgba(21, 21, 21, 0.82);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.22);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.pad {
+  border-radius: 50%;
+}
+
+.pad::before {
+  position: absolute;
+  inset: 17px 14px 17px 18px;
+  content: "";
+  border-top: 10px solid transparent;
+  border-right: 16px solid rgba(255, 255, 255, 0.82);
+  border-bottom: 10px solid transparent;
+}
+
+.pad[data-input="right"]::before {
+  inset: 17px 18px 17px 14px;
+  border-right: 0;
+  border-left: 16px solid rgba(255, 255, 255, 0.82);
+}
+
+.jump {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 159, 188, 0.32);
+}
+
+.jump::before {
+  position: absolute;
+  inset: 16px 18px 22px;
+  content: "";
+  border-right: 15px solid transparent;
+  border-bottom: 22px solid rgba(255, 255, 255, 0.86);
+  border-left: 15px solid transparent;
+}
+
+@media (pointer: coarse) {
+  .touch {
+    display: flex;
+  }
+}
