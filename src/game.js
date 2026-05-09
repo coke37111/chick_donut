@@ -54,6 +54,10 @@ const realisticChickSprites = Object.fromEntries(
 const keys = new Set();
 const buttons = new Set();
 const particles = [];
+const controlMedia = window.matchMedia("(pointer: coarse), (max-width: 820px)");
+let renderScale = 1;
+let renderOffsetX = 0;
+let renderOffsetY = 0;
 const realisticBg = new Image();
 realisticBg.src = REALISTIC_BG_SRC;
 const realisticChick = new Image();
@@ -107,6 +111,26 @@ let startTime = performance.now();
 let lastTime = performance.now();
 let artMode = "original";
 const initialArtMode = new URLSearchParams(window.location.search).get("art") === "realistic" ? "realistic" : "original";
+
+function syncCanvasResolution() {
+  const dpr = Math.min(2.5, Math.max(1, window.devicePixelRatio || 1));
+  const rect = canvas.getBoundingClientRect();
+  const cssW = Math.max(1, rect.width || VIEW_W);
+  const cssH = Math.max(1, rect.height || VIEW_H);
+  const nextW = Math.round(cssW * dpr);
+  const nextH = Math.round(cssH * dpr);
+  if (canvas.width !== nextW || canvas.height !== nextH) {
+    canvas.width = nextW;
+    canvas.height = nextH;
+  }
+  renderScale = Math.min(canvas.width / VIEW_W, canvas.height / VIEW_H);
+  renderOffsetX = Math.round((canvas.width - VIEW_W * renderScale) * 0.5);
+  renderOffsetY = controlMedia.matches ? 0 : Math.round((canvas.height - VIEW_H * renderScale) * 0.5);
+}
+
+function getWorldLift() {
+  return controlMedia.matches ? -42 : 0;
+}
 
 function setArtMode(nextMode) {
   artMode = nextMode;
@@ -759,10 +783,14 @@ function drawOverlay() {
 }
 
 function draw(time) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#404240";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(renderScale, 0, 0, renderScale, renderOffsetX, renderOffsetY);
   ctx.save();
-  ctx.clearRect(0, 0, VIEW_W, VIEW_H);
   drawBackground(time);
-  ctx.translate(-cameraX, 0);
+  ctx.translate(-cameraX, getWorldLift());
 
   for (const platform of platforms) drawPlatform(platform);
   for (const ring of rings) drawRing(ring, time);
@@ -803,6 +831,12 @@ window.addEventListener("keyup", (event) => {
   if (["ArrowUp", "KeyW", "Space"].includes(event.code)) keys.delete("jump");
 });
 
+for (const target of [stageEl, canvas]) {
+  target.addEventListener("contextmenu", (event) => event.preventDefault());
+  target.addEventListener("selectstart", (event) => event.preventDefault());
+  target.addEventListener("dragstart", (event) => event.preventDefault());
+}
+
 for (const button of document.querySelectorAll("[data-input]")) {
   const input = button.dataset.input;
   button.addEventListener("pointerdown", (event) => {
@@ -810,6 +844,8 @@ for (const button of document.querySelectorAll("[data-input]")) {
     button.setPointerCapture(event.pointerId);
     buttons.add(input);
   });
+  button.addEventListener("touchstart", (event) => event.preventDefault(), { passive: false });
+  button.addEventListener("contextmenu", (event) => event.preventDefault());
   button.addEventListener("pointerup", () => buttons.delete(input));
   button.addEventListener("pointercancel", () => buttons.delete(input));
   button.addEventListener("lostpointercapture", () => buttons.delete(input));
@@ -824,5 +860,8 @@ artSwitch.addEventListener("click", () => {
 });
 
 setArtMode(initialArtMode);
+syncCanvasResolution();
+window.addEventListener("resize", syncCanvasResolution);
+controlMedia.addEventListener("change", syncCanvasResolution);
 resetGame();
 requestAnimationFrame(frame);
